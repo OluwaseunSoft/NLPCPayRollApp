@@ -71,62 +71,62 @@ namespace NLPCPayRollApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BasicSalary")
-                        .HasColumnType("int");
+                    b.Property<double>("BasicSalary")
+                        .HasColumnType("float");
 
-                    b.Property<int>("Bonus")
-                        .HasColumnType("int");
+                    b.Property<double>("Bonus")
+                        .HasColumnType("float");
 
                     b.Property<int>("CadreLevelId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Dressing")
-                        .HasColumnType("int");
+                    b.Property<double>("Dressing")
+                        .HasColumnType("float");
 
-                    b.Property<int>("Entertainment")
-                        .HasColumnType("int");
+                    b.Property<double>("Entertainment")
+                        .HasColumnType("float");
 
-                    b.Property<int>("Furniture")
-                        .HasColumnType("int");
+                    b.Property<double>("Furniture")
+                        .HasColumnType("float");
 
-                    b.Property<int>("GrossIncome")
-                        .HasColumnType("int");
+                    b.Property<double>("GrossIncome")
+                        .HasColumnType("float");
 
-                    b.Property<int>("Housing")
-                        .HasColumnType("int");
+                    b.Property<double>("Housing")
+                        .HasColumnType("float");
 
-                    b.Property<int>("LifeAssurance")
-                        .HasColumnType("int");
+                    b.Property<double>("LifeAssurance")
+                        .HasColumnType("float");
 
-                    b.Property<int>("Lunch")
-                        .HasColumnType("int");
+                    b.Property<double>("Lunch")
+                        .HasColumnType("float");
 
-                    b.Property<int>("NHF")
-                        .HasColumnType("int");
+                    b.Property<double>("NHF")
+                        .HasColumnType("float");
 
-                    b.Property<int>("NHIS")
-                        .HasColumnType("int");
+                    b.Property<double>("NHIS")
+                        .HasColumnType("float");
 
-                    b.Property<int>("NPS")
-                        .HasColumnType("int");
+                    b.Property<double>("NPS")
+                        .HasColumnType("float");
 
-                    b.Property<int>("OtherAllowances")
-                        .HasColumnType("int");
+                    b.Property<double>("OtherAllowances")
+                        .HasColumnType("float");
 
-                    b.Property<int>("Passage")
-                        .HasColumnType("int");
+                    b.Property<double>("Passage")
+                        .HasColumnType("float");
 
-                    b.Property<int>("TaxPayable")
-                        .HasColumnType("int");
+                    b.Property<double>("TaxPayable")
+                        .HasColumnType("float");
 
-                    b.Property<int>("ThirteenthMonth")
-                        .HasColumnType("int");
+                    b.Property<double>("ThirteenthMonth")
+                        .HasColumnType("float");
 
-                    b.Property<int>("Transport")
-                        .HasColumnType("int");
+                    b.Property<double>("Transport")
+                        .HasColumnType("float");
 
-                    b.Property<int>("Utility")
-                        .HasColumnType("int");
+                    b.Property<double>("Utility")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
