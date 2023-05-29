@@ -48,6 +48,39 @@ namespace NLPCPayRollApp.Controllers
             }
         }
 
+        [HttpGet("PaySlip")]
+        public ActionResult<PaySlip> ViewPaySlip(int id)
+        {
+            try
+            {
+                var employee = _context.Employees.FirstOrDefault(e => e.Id == id);
+                if (employee == null)
+                    return NotFound("Staff Details Not Found");
+                var cadreLevel = _context.CadreLevels.Include(c => c.PayrollComponents).FirstOrDefault(c => c.Name == employee.CadreLevelName);
+                if (cadreLevel == null)
+                    return NotFound("Staff Details Not Found");
+                var earning = cadreLevel.PayrollComponents.BasicSalary + cadreLevel.PayrollComponents.Housing + cadreLevel.PayrollComponents.Transport
+                                + cadreLevel.PayrollComponents.Furniture + cadreLevel.PayrollComponents.Entertainment + cadreLevel.PayrollComponents.Lunch + cadreLevel.PayrollComponents.Passage
+                                + cadreLevel.PayrollComponents.Dressing + cadreLevel.PayrollComponents.Bonus + cadreLevel.PayrollComponents.ThirteenthMonth + cadreLevel.PayrollComponents.Utility + cadreLevel.PayrollComponents.OtherAllowances;
+                var deduction = cadreLevel.PayrollComponents.NHF + cadreLevel.PayrollComponents.NHIS + cadreLevel.PayrollComponents.NPS + cadreLevel.PayrollComponents.LifeAssurance + cadreLevel.PayrollComponents.TaxPayable;
+                var payslip = new PaySlip
+                {
+                    EmployeeName = employee.Name,
+                    CadreLevelName = cadreLevel.Name,
+                    Earnings = earning,
+                    Deductions = deduction,
+                    NetSalary = Convert.ToDecimal(earning),//Convert.ToDecimal(cadreLevel.PayrollComponents.GrossIncome - deduction),
+                    GrossIncome = earning + deduction//cadreLevel.PayrollComponents.GrossIncome
+                };
+
+                return Ok(payslip);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         public ActionResult<Employee> AddEmployee(Employee employee)
         {
