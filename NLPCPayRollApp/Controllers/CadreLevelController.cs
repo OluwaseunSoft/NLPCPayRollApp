@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NLPCPayRollApp.Data;
 using NLPCPayRollApp.Models;
 
@@ -10,12 +11,10 @@ namespace NLPCPayRollApp.Controllers
     public class CadreLevelController : ControllerBase
     {
         private readonly DataContext _context;
-        private List<CadreLevel> cadreLevels;
 
         public CadreLevelController(DataContext context)
         {
             _context = context;
-            cadreLevels = new List<CadreLevel>();
         }
 
         [HttpGet]
@@ -23,13 +22,13 @@ namespace NLPCPayRollApp.Controllers
         {
             try
             {
-                return Ok(_context.CadreLevels.ToList());
+                return Ok(_context.CadreLevels.Include(c => c.PayrollComponents).ToList());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
             }
-            return BadRequest();
+            
         }
 
         [HttpGet("{id}")]
@@ -37,7 +36,7 @@ namespace NLPCPayRollApp.Controllers
         {
             try
             {
-                var cadreLevel = _context.CadreLevels.FirstOrDefault(c => c.Id == id);
+                var cadreLevel = _context.CadreLevels.Include(c => c.PayrollComponents).FirstOrDefault(c => c.Id == id);
                 if (cadreLevel == null)
                     return NotFound();
 
@@ -45,65 +44,70 @@ namespace NLPCPayRollApp.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
             }
-            return BadRequest();
         }
 
         [HttpPost]
         public ActionResult<CadreLevel> AddCadreLevel(CadreLevel cadreLevel)
         {
             try
-            { 
-            _context.CadreLevels.Add(cadreLevel);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(GetCadreLevel), new { id = cadreLevel.Id }, cadreLevel);
+            {
+                cadreLevel.PayrollComponents.CadreLevelId = cadreLevel.Id;
+                _context.CadreLevels.Add(cadreLevel);
+                _context.SaveChanges();
+                return CreatedAtAction(nameof(GetCadreLevel), new { id = cadreLevel.Id }, cadreLevel);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
             }
-            return BadRequest();
+            
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateCadreLevel(int id, CadreLevel updatedCadreLevel)
         {
-            try { 
-            var cadreLevel = _context.CadreLevels.FirstOrDefault(c => c.Id == id);
-            if (cadreLevel == null)
-                return NotFound();
+            try
+            {
+                var cadreLevel = _context.CadreLevels.FirstOrDefault(c => c.Id == id);
+                if (cadreLevel == null)
+                    return NotFound();
 
-            cadreLevel.Name = updatedCadreLevel.Name;
-            _context.CadreLevels.Update(cadreLevel);
-            _context.SaveChanges();
+                cadreLevel.Name = updatedCadreLevel.Name;
+                cadreLevel.PayrollComponents = updatedCadreLevel.PayrollComponents;
+                _context.CadreLevels.Update(cadreLevel);
+                _context.SaveChanges();
 
-            return NoContent();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
             }
-            return BadRequest();
+            
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteCadreLevel(int id)
         {
-            try { 
-            var cadreLevel = _context.CadreLevels.FirstOrDefault(c => c.Id == id);
-            if (cadreLevel == null)
-                return NotFound();
+            try
+            {
+                var cadreLevel = _context.CadreLevels.FirstOrDefault(c => c.Id == id);
+                var payroll = _context.PayrollComponents.FirstOrDefault(c => c.CadreLevelId == id);
+                if (cadreLevel == null || payroll == null)
+                    return NotFound();
 
-            _context.CadreLevels.Remove(cadreLevel);
-            _context.SaveChanges();
-            return NoContent();
+                _context.CadreLevels.Remove(cadreLevel);
+                _context.PayrollComponents.Remove(payroll);
+                _context.SaveChanges();
+                return NoContent();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
             }
-            return BadRequest();
+           
         }
     }
 }

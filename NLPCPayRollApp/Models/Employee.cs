@@ -1,9 +1,10 @@
 ﻿namespace NLPCPayRollApp.Models
 {
-    public class CadreLevel
+    public class Employee
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public PayrollComponents PayrollComponents { get; set; }
+        public string Designation { get; set; }
+        public int CadreLevelId { get; set; }
     }
 }
